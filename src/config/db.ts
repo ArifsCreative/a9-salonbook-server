@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const connectDB = async (): Promise<void> => {
@@ -9,7 +8,9 @@ const connectDB = async (): Promise<void> => {
       throw new Error("MONGODB_URI is missing in .env");
     }
 
-    await mongoose.connect(mongoURI);
+    await mongoose.connect(mongoURI, {
+      dbName: "salonbook",
+    });
 
     console.log("MongoDB Atlas connected successfully");
   } catch (error) {
