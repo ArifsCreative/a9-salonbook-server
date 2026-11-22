@@ -13,6 +13,10 @@ import imageRoutes from "./routes/imageRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import { handleStripeWebhook } from "./controllers/paymentController.js";
+import userRoutes from "./routes/userRoutes.js";
+import transactionRoutes from "./routes/transactionRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 dotenv.config();
 
@@ -31,12 +35,21 @@ app.use(
 // Better Auth handler — must be before express.json()
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
+// Stripe webhook: raw body required for signature verification
+app.post(
+  "/api/payments/webhook",
+  express.raw({ type: "application/json" }),
+  handleStripeWebhook,
+);
+
 // JSON middleware for other API routes
 app.use(express.json());
+
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/transactions", transactionRoutes);
 app.use("/api/services", serviceRoutes);
-
-app.use(express.json());
-
+app.use("/api/users", userRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/images", imageRoutes);
