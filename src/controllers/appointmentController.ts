@@ -1,4 +1,3 @@
-
 import type { Request, Response } from "express";
 import mongoose from "mongoose";
 import Appointment from "../models/Appointment.js";
@@ -7,7 +6,7 @@ import Service from "../models/Service.js";
 // Customer: Create appointment
 export const createAppointment = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const customerId = res.locals.currentUser.id;
@@ -28,8 +27,10 @@ export const createAppointment = async (
       return;
     }
 
-    if (message !== undefined &&
-        (typeof message !== "string" || message.length > 500)) {
+    if (
+      message !== undefined &&
+      (typeof message !== "string" || message.length > 500)
+    ) {
       res.status(400).json({
         success: false,
         message: "Message must not exceed 500 characters.",
@@ -110,7 +111,7 @@ export const createAppointment = async (
 // Customer: Get own appointments
 export const getMyAppointments = async (
   _req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const customerId = res.locals.currentUser.id;
@@ -139,15 +140,12 @@ export const getMyAppointments = async (
 // Customer: Cancel own pending appointment
 export const cancelMyAppointment = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const id = req.params.id;
 
-    if (
-      typeof id !== "string" ||
-      !mongoose.Types.ObjectId.isValid(id)
-    ) {
+    if (typeof id !== "string" || !mongoose.Types.ObjectId.isValid(id)) {
       res.status(400).json({
         success: false,
         message: "Invalid appointment ID.",
@@ -158,13 +156,11 @@ export const cancelMyAppointment = async (
     const appointment = await Appointment.findOneAndUpdate(
       {
         _id: id,
-        customerId: new mongoose.Types.ObjectId(
-          res.locals.currentUser.id
-        ),
+        customerId: new mongoose.Types.ObjectId(res.locals.currentUser.id),
         status: "pending",
       },
       { $set: { status: "cancelled" } },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!appointment) {
@@ -193,7 +189,7 @@ export const cancelMyAppointment = async (
 // Admin: Get all appointments
 export const getAllAppointments = async (
   _req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const appointments = await Appointment.find()
@@ -218,16 +214,13 @@ export const getAllAppointments = async (
 // Admin: Confirm or cancel appointment
 export const updateAppointmentStatus = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const id = req.params.id;
     const { status } = req.body;
 
-    if (
-      typeof id !== "string" ||
-      !mongoose.Types.ObjectId.isValid(id)
-    ) {
+    if (typeof id !== "string" || !mongoose.Types.ObjectId.isValid(id)) {
       res.status(400).json({
         success: false,
         message: "Invalid appointment ID.",
@@ -261,10 +254,7 @@ export const updateAppointmentStatus = async (
       return;
     }
 
-    if (
-      status === "confirmed" &&
-      appointment.status !== "pending"
-    ) {
+    if (status === "confirmed" && appointment.status !== "pending") {
       res.status(400).json({
         success: false,
         message: "Only pending appointments can be confirmed.",
