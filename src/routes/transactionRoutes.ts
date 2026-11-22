@@ -7,6 +7,7 @@ import { verifyRole } from "../middleware/verifyRole.js";
 
 const router = Router();
 
+// Admin: View all payment transactions
 router.get(
   "/",
   verifyToken,
