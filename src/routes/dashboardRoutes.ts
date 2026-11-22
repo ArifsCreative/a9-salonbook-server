@@ -12,7 +12,7 @@ import { verifyRole } from "../middleware/verifyRole.js";
 
 const router = Router();
 
-// Customer Dashboard
+// Customer Dashboard Statistics
 router.get(
   "/customer",
   verifyToken,
@@ -22,7 +22,7 @@ router.get(
   getCustomerDashboardStats,
 );
 
-// Admin Dashboard
+// Admin Dashboard Statistics
 router.get(
   "/admin",
   verifyToken,

@@ -5,6 +5,7 @@ import { jwt } from "better-auth/plugins";
 import { mongoClient, mongoDb } from "./mongodb.js";
 
 export const auth = betterAuth({
+  trustedOrigins: [process.env.CLIENT_URL || "http://localhost:3000"],
   database: mongodbAdapter(mongoDb, {
     client: mongoClient,
   }),
