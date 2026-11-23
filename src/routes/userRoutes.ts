@@ -1,6 +1,4 @@
-
 import { Router } from "express";
-
 import {
   getAllCustomers,
   updateCustomerBlockStatus,
@@ -13,18 +11,10 @@ import { verifyRole } from "../middleware/verifyRole.js";
 
 const router = Router();
 
-router.use(
-  verifyToken,
-  loadCurrentUser,
-  checkBlockedUser,
-  verifyRole("admin")
-);
+router.use(verifyToken, loadCurrentUser, checkBlockedUser, verifyRole("admin"));
 
 router.get("/customers", getAllCustomers);
 
-router.patch(
-  "/customers/:id/status",
-  updateCustomerBlockStatus
-);
+router.patch("/customers/:id/status", updateCustomerBlockStatus);
 
 export default router;
