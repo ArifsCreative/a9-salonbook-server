@@ -4,6 +4,7 @@ import Appointment from "../models/Appointment.js";
 import Service from "../models/Service.js";
 import Transaction from "../models/Transaction.js";
 import { mongoDb } from "../lib/mongodb.js";
+import connectDB from "../config/db.js";
 
 // Customer Dashboard Statistics
 export const getCustomerDashboardStats = async (
@@ -11,7 +12,18 @@ export const getCustomerDashboardStats = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const customerId = new mongoose.Types.ObjectId(res.locals.currentUser.id);
+    await connectDB();
+    const userId = res.locals.currentUser.id;
+
+    if (!mongoose.isObjectIdOrHexString(userId)) {
+      res.status(400).json({
+        success: false,
+        message: "Customer ID is not a valid MongoDB ObjectId.",
+      });
+      return;
+    }
+
+    const customerId = new mongoose.Types.ObjectId(userId);
 
     const [total, pending, confirmed, cancelled] = await Promise.all([
       Appointment.countDocuments({ customerId }),
@@ -45,6 +57,7 @@ export const getAdminDashboardStats = async (
   res: Response,
 ): Promise<void> => {
   try {
+    await connectDB();
     const users = mongoDb.collection("users");
 
     const [
