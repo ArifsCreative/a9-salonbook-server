@@ -1,19 +1,28 @@
 import mongoose from "mongoose";
 
+let connectionPromise: Promise<typeof mongoose> | null = null;
+
 const connectDB = async (): Promise<void> => {
-  try {
+  if (mongoose.connection.readyState === 1) {
+    return;
+  }
+
+  if (!connectionPromise) {
     const mongoURI = process.env.MONGODB_URI;
 
     if (!mongoURI) {
       throw new Error("MONGODB_URI is missing in .env");
     }
 
-    await mongoose.connect(mongoURI, {
+    connectionPromise = mongoose.connect(mongoURI, {
       dbName: "salonbook",
     });
+  }
 
-    console.log("MongoDB Atlas connected successfully");
+  try {
+    await connectionPromise;
   } catch (error) {
+    connectionPromise = null;
     console.error("MongoDB connection failed:", error);
     throw error;
   }

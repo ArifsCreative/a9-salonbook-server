@@ -45,13 +45,27 @@ app.post(
 // JSON middleware for other API routes
 app.use(express.json());
 
+// Connect Mongoose before handling database-backed API routes
+app.use("/api", async (_req: Request, res: Response, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error("API database connection error:", error);
+
+    res.status(503).json({
+      success: false,
+      message: "Database connection unavailable.",
+    });
+  }
+});
+
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/payments", paymentRoutes);
-app.use("/api/services", serviceRoutes);
 app.use("/api/images", imageRoutes);
 app.use("/api/appointments", appointmentRoutes);
 
