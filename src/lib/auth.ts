@@ -5,6 +5,16 @@ import { jwt } from "better-auth/plugins";
 import { mongoClient, mongoDb } from "./mongodb.js";
 
 export const auth = betterAuth({
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: false,
+    },
+    defaultCookieAttributes: {
+      sameSite: process.env.VERCEL ? "none" : "lax",
+      secure: Boolean(process.env.VERCEL),
+      httpOnly: true,
+    },
+  },
   trustedOrigins: [process.env.CLIENT_URL || "http://localhost:3000"],
   database: mongodbAdapter(mongoDb, {
     client: mongoClient,
