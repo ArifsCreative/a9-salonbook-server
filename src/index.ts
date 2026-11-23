@@ -101,17 +101,21 @@ app.get(
   },
 );
 
-const startServer = async (): Promise<void> => {
-  try {
-    await connectDB();
+export default app;
 
-    app.listen(PORT, () => {
-      console.log(`SalonBook server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error("Failed to start SalonBook server:", error);
-    process.exit(1);
-  }
-};
+if (!process.env.VERCEL) {
+  const startServer = async (): Promise<void> => {
+    try {
+      await connectDB();
 
-startServer();
+      app.listen(PORT, () => {
+        console.log(`SalonBook server running on port ${PORT}`);
+      });
+    } catch (error) {
+      console.error("Failed to start SalonBook server:", error);
+      process.exit(1);
+    }
+  };
+
+  void startServer();
+}
